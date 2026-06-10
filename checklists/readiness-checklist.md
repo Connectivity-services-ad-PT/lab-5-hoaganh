@@ -1,16 +1,23 @@
-# Readiness Checklist – Lab 05
+# Readiness Checklist — Lab 05
 
-Đây là danh sách kiểm tra (checklist) để đảm bảo stack Docker Compose của bạn đã sẵn sàng trước khi gửi bài. Hãy tick vào mỗi mục sau khi hoàn thành.
+## Checklist 6 điểm
 
-- [ ] **Database ready:** container DB đã chạy và phản hồi `pg_isready`. Kiểm tra bằng `docker exec -it fit4110-db-lab05 pg_isready -U $POSTGRES_USER`.
-- [ ] **AI service ready:** container AI service trả về `200` cho endpoint `/health` và `/predict` hoạt động.
-- [ ] **API ready:** container API trả `200` cho `/health` và có thể tạo/lấy readings khi token hợp lệ.
-- [ ] **Environment variables:** `.env` đã được thiết lập đúng (APP_PORT, POSTGRES_USER, AUTH_TOKEN,…). Không sử dụng secret thật; lưu secret vào `.env` cục bộ, commit `.env.example`.
-- [ ] **Network & Ports:** mạng `team-internal` hoạt động; API gọi được AI bằng hostname `ai-service`; ports 8000 (API), 9000 (AI) và 5432 (DB) được map đúng.
-- [ ] **Image tags:** bạn đã build image với tag `v0.1.0-<team>` và push lên registry (ghcr.io hoặc Docker Hub). Xác nhận rằng tag xuất hiện trong registry.
+- [x] **DB sẵn sàng**: `pg_isready` trả OK, container `fit4110-db-lab05` healthy
+- [x] **AI service sẵn sàng**: `/health` trả 200, container `fit4110-ai-lab05` healthy
+- [x] **API kết nối được DB và AI**: `POST /policy/access-check` trả ALLOW thành công
+- [x] **Biến môi trường đúng**: `.env.example` đầy đủ, không commit secret thật
+- [x] **Network `team-internal` hoạt động**: các service gọi nội bộ qua tên container
+- [x] **Version/tag đúng quy ước**: `v0.1.0-team-core`, push lên Docker Hub
 
-Ghi chú thêm những vấn đề gặp phải hoặc điều chỉnh tại đây:
+## Ghi chú
 
-```
-- Mô tả…
-```
+| Service | Image | Port | Health |
+|---|---|---|---|
+| api | fit4110/core-business:lab04 | 8000 | GET /health → 200 |
+| ai-service | Dockerfile.ai | 9000 | GET /health → 200 |
+| db | postgres:16-alpine | 5432 | pg_isready |
+
+## Sign-off
+
+- Provider: Nhóm A6 — Core Business
+- Ngày: 2026-06-10

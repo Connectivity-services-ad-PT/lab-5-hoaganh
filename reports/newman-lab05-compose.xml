@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="FIT4110 Lab03 — Core Business Policy API (pair10)" tests="17" time="0.577">
+  <testsuite name="01_Functional / GET /health — Service còn sống" id="c9cae601-0242-4f99-90da-916f005b39a0" timestamp="2026-06-10T12:10:51.895Z" tests="3" failures="0" errors="0" time="0.207">
+    <testcase name="Status 200" time="0.207" classname="01FunctionalGetHealthServiceConSng"/>
+    <testcase name="Response có status ok" time="0.207" classname="01FunctionalGetHealthServiceConSng"/>
+    <testcase name="Response có service name" time="0.207" classname="01FunctionalGetHealthServiceConSng"/>
+  </testsuite>
+  <testsuite name="01_Functional / POST /policy/access-check — ALLOW" id="d2b856da-6c6b-445f-8558-1290f845aa82" timestamp="2026-06-10T12:10:51.895Z" tests="4" failures="0" errors="0" time="0.165">
+    <testcase name="Status 200" time="0.165" classname="01FunctionalPostPolicyAccessCheckAllow"/>
+    <testcase name="Response có decision" time="0.165" classname="01FunctionalPostPolicyAccessCheckAllow"/>
+    <testcase name="Response có policyId" time="0.165" classname="01FunctionalPostPolicyAccessCheckAllow"/>
+    <testcase name="Response có cardId và gateId" time="0.165" classname="01FunctionalPostPolicyAccessCheckAllow"/>
+  </testsuite>
+  <testsuite name="01_Functional / GET /policy/rules — Danh sách rules" id="14b7dfa9-6feb-4112-af70-9116cfed1699" timestamp="2026-06-10T12:10:51.895Z" tests="3" failures="0" errors="0" time="0.014">
+    <testcase name="Status 200" time="0.014" classname="01FunctionalGetPolicyRulesDanhSachRules"/>
+    <testcase name="Response có items array" time="0.014" classname="01FunctionalGetPolicyRulesDanhSachRules"/>
+    <testcase name="Response có hasMore" time="0.014" classname="01FunctionalGetPolicyRulesDanhSachRules"/>
+  </testsuite>
+  <testsuite name="01_Functional / GET /policy/rules/{policyId} — Chi tiết rule" id="b8ea8c2b-274a-455b-bfbe-8687ec146716" timestamp="2026-06-10T12:10:51.895Z" tests="3" failures="0" errors="0" time="0.016">
+    <testcase name="Status 200" time="0.016" classname="01FunctionalGetPolicyRulesPolicyIdChiTitRule"/>
+    <testcase name="Response có policyId" time="0.016" classname="01FunctionalGetPolicyRulesPolicyIdChiTitRule"/>
+    <testcase name="Response có allowedRoles array" time="0.016" classname="01FunctionalGetPolicyRulesPolicyIdChiTitRule"/>
+  </testsuite>
+  <testsuite name="01_Functional / POST /access-log — Gửi log ALLOW" id="53ac66c1-9a2e-44f9-854f-61960a91a65a" timestamp="2026-06-10T12:10:51.895Z" tests="3" failures="0" errors="0" time="0.051">
+    <testcase name="Status 201 Created" time="0.051" classname="01FunctionalPostAccessLogGiLogAllow"/>
+    <testcase name="Response có logId" time="0.051" classname="01FunctionalPostAccessLogGiLogAllow"/>
+    <testcase name="Response có acceptedAt" time="0.051" classname="01FunctionalPostAccessLogGiLogAllow"/>
+  </testsuite>
+  <testsuite name="02_Auth / GET /policy/rules — Có token hợp lệ" id="c3fe203f-525f-41dd-9ca1-e855d1ef7289" timestamp="2026-06-10T12:10:51.895Z" tests="1" failures="0" errors="0" time="0.009">
+    <testcase name="Có token hợp lệ thì status 200" time="0.009" classname="02AuthGetPolicyRulesCoTokenHpL"/>
+  </testsuite>
+  <testsuite name="02_Auth / GET /policy/rules — Không có token" id="1f685053-b56b-4959-b355-7fb987654d2e" timestamp="2026-06-10T12:10:51.895Z" tests="1" failures="0" errors="0" time="0.013">
+    <testcase name="Thiếu token trả về 401 hoặc 403" time="0.013" classname="02AuthGetPolicyRulesKhongCoToken"/>
+  </testsuite>
+  <testsuite name="03_Negative / POST /policy/access-check — cardId sai định dạng" id="91cf88b0-b3de-4efb-8723-5386ad710be3" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.025">
+    <testcase name="cardId sai định dạng trả về 400 hoặc 422" time="0.025" classname="03NegativePostPolicyAccessCheckCardIdSaiDnhDng"/>
+    <testcase name="Response theo ProblemDetails" time="0.025" classname="03NegativePostPolicyAccessCheckCardIdSaiDnhDng"/>
+  </testsuite>
+  <testsuite name="03_Negative / POST /policy/access-check — Thiếu field bắt buộc" id="ce3999a1-4509-4fe5-b249-ec47f0e9729c" timestamp="2026-06-10T12:10:51.895Z" tests="1" failures="0" errors="0" time="0.012">
+    <testcase name="Thiếu field bắt buộc trả về lỗi client" time="0.012" classname="03NegativePostPolicyAccessCheckThiuFieldBtBuc"/>
+  </testsuite>
+  <testsuite name="03_Negative / GET /policy/rules/{policyId} — policyId không tồn tại (mock aware)" id="f180b462-1c58-48c0-b90f-6e27bf6e3722" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="policyId không tồn tại: mock trả 200/404, service thật trả 404" time="0.009" classname="03NegativeGetPolicyRulesPolicyIdPolicyIdKhongTnTiMockAware"/>
+    <testcase name="Ghi chú: mock không validate business logic, service thật sẽ trả 404" time="0.009" classname="03NegativeGetPolicyRulesPolicyIdPolicyIdKhongTnTiMockAware"/>
+  </testsuite>
+  <testsuite name="04_Boundary_Reliability / GET /policy/rules — limit=1 (min boundary)" id="2151c5bf-f59a-4485-a06a-479bacd29fdd" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.012">
+    <testcase name="limit=1 trả về 200" time="0.012" classname="04BoundaryReliabilityGetPolicyRulesLimit1MinBoundary"/>
+    <testcase name="items có tối đa 1 phần tử" time="0.012" classname="04BoundaryReliabilityGetPolicyRulesLimit1MinBoundary"/>
+  </testsuite>
+  <testsuite name="04_Boundary_Reliability / GET /policy/rules — limit=100 (max boundary)" id="29318255-153f-4cd4-8428-ad3c57dd54e6" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.009">
+    <testcase name="limit=100 trả về 200" time="0.009" classname="04BoundaryReliabilityGetPolicyRulesLimit100MaxBoundary"/>
+    <testcase name="items không vượt quá 100" time="0.009" classname="04BoundaryReliabilityGetPolicyRulesLimit100MaxBoundary"/>
+  </testsuite>
+  <testsuite name="04_Boundary_Reliability / POST /access-log — Gửi log DENY với reason" id="40964a58-71f4-4db2-bbf0-96ac3f3208ac" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Log DENY được ghi nhận thành công" time="0.007" classname="04BoundaryReliabilityPostAccessLogGiLogDenyViReason"/>
+    <testcase name="Response time hợp lý" time="0.007" classname="04BoundaryReliabilityPostAccessLogGiLogDenyViReason"/>
+  </testsuite>
+  <testsuite name="05_Consumer_side_Smoke / GET /health — Access Gate kiểm tra Core Business còn sống" id="94f670eb-9128-4833-8850-d490c53f5d28" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.007">
+    <testcase name="Core Business service health check pass" time="0.007" classname="05ConsumerSideSmokeGetHealthAccessGateKimTraCoreBusinessConSng"/>
+    <testcase name="Consumer có thể kết nối được Provider" time="0.007" classname="05ConsumerSideSmokeGetHealthAccessGateKimTraCoreBusinessConSng"/>
+  </testsuite>
+  <testsuite name="05_Consumer_side_Smoke / POST /policy/access-check — Consumer smoke test EXIT" id="fff58e3a-6b3e-4410-99c7-8ad1105d744e" timestamp="2026-06-10T12:10:51.895Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Access Gate có thể gọi policy check cho direction EXIT" time="0.006" classname="05ConsumerSideSmokePostPolicyAccessCheckConsumerSmokeTestExit"/>
+    <testcase name="Core Business trả về decision hợp lệ" time="0.006" classname="05ConsumerSideSmokePostPolicyAccessCheckConsumerSmokeTestExit"/>
+  </testsuite>
+  <testsuite name="06_Local_only_NonFunctional / GET /health — Response time SLA (chỉ chạy local)" id="9e93feb4-6fc7-4385-acee-bdb59024bb36" timestamp="2026-06-10T12:10:51.895Z" tests="1" failures="0" errors="0" time="0.007">
+    <testcase name="Health check response &lt; 200ms trên local" time="0.007" classname="06LocalOnlyNonFunctionalGetHealthResponseTimeSlaChChyLocal"/>
+  </testsuite>
+  <testsuite name="06_Local_only_NonFunctional / POST /policy/access-check — Latency SLA (chỉ chạy local)" id="c8962227-7988-409a-a13c-fe70e51dcd4d" timestamp="2026-06-10T12:10:51.895Z" tests="1" failures="0" errors="0" time="0.008">
+    <testcase name="Policy check response &lt; 200ms trên local (SLA realtime)" time="0.008" classname="06LocalOnlyNonFunctionalPostPolicyAccessCheckLatencySlaChChyLocal"/>
+  </testsuite>
+</testsuites>

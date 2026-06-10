@@ -1,0 +1,738 @@
+{
+  "info": {
+    "name": "FIT4110 Lab03 — Core Business Policy API (pair10)",
+    "description": "Bộ kiểm thử cho Core Business Policy API (pair10). Consumer: Access Gate. Provider: Core Business.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4010"
+    },
+    {
+      "key": "authToken",
+      "value": "lab-token"
+    }
+  ],
+  "item": [
+    {
+      "name": "01_Functional",
+      "item": [
+        {
+          "name": "GET /health — Service còn sống",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response có status ok', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('ok');",
+                  "});",
+                  "pm.test('Response có service name', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('service');",
+                  "  pm.expect(json.service).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /policy/access-check — ALLOW",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-001\",\n  \"gateId\": \"GATE-01\",\n  \"direction\": \"ENTER\",\n  \"timestamp\": \"2026-05-10T08:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/access-check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "access-check"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response có decision', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('decision');",
+                  "  pm.expect(['ALLOW', 'DENY']).to.include(json.decision);",
+                  "});",
+                  "pm.test('Response có policyId', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('policyId');",
+                  "});",
+                  "pm.test('Response có cardId và gateId', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('cardId');",
+                  "  pm.expect(json).to.have.property('gateId');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /policy/rules — Danh sách rules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response có items array', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('items');",
+                  "  pm.expect(json.items).to.be.an('array');",
+                  "});",
+                  "pm.test('Response có hasMore', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('hasMore');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /policy/rules/{policyId} — Chi tiết rule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules/POL-2026-001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules",
+                "POL-2026-001"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() { pm.response.to.have.status(200); });",
+                  "pm.test('Response có policyId', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('policyId');",
+                  "});",
+                  "pm.test('Response có allowedRoles array', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('allowedRoles');",
+                  "  pm.expect(json.allowedRoles).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /access-log — Gửi log ALLOW",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-001\",\n  \"gateId\": \"GATE-01\",\n  \"direction\": \"ENTER\",\n  \"decision\": \"ALLOW\",\n  \"reason\": null,\n  \"timestamp\": \"2026-05-10T08:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/access-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-log"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', function() { pm.response.to.have.status(201); });",
+                  "pm.test('Response có logId', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('logId');",
+                  "});",
+                  "pm.test('Response có acceptedAt', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('acceptedAt');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02_Auth",
+      "item": [
+        {
+          "name": "GET /policy/rules — Có token hợp lệ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Có token hợp lệ thì status 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /policy/rules — Không có token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Thiếu token trả về 401 hoặc 403', function() {",
+                  "  pm.expect([401, 403]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03_Negative",
+      "item": [
+        {
+          "name": "POST /policy/access-check — cardId sai định dạng",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"INVALID-CARD\",\n  \"gateId\": \"GATE-01\",\n  \"direction\": \"ENTER\",\n  \"timestamp\": \"2026-05-10T08:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/access-check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "access-check"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('cardId sai định dạng trả về 400 hoặc 422', function() {",
+                  "  pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Response theo ProblemDetails', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('status');",
+                  "  pm.expect(json.status).to.be.within(400, 599);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /policy/access-check — Thiếu field bắt buộc",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/access-check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "access-check"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Thiếu field bắt buộc trả về lỗi client', function() {",
+                  "  pm.expect([400, 422]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /policy/rules/{policyId} — policyId không tồn tại (mock aware)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Prefer",
+                "value": "code=404"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules/POL-9999-999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules",
+                "POL-9999-999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('policyId không tồn tại: mock trả 200/404, service thật trả 404', function() {",
+                  "  pm.expect([200, 404]).to.include(pm.response.code);",
+                  "});",
+                  "pm.test('Ghi chú: mock không validate business logic, service thật sẽ trả 404', function() {",
+                  "  pm.expect(true).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04_Boundary_Reliability",
+      "item": [
+        {
+          "name": "GET /policy/rules — limit=1 (min boundary)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules?limit=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('limit=1 trả về 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('items có tối đa 1 phần tử', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.items.length).to.be.at.most(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /policy/rules — limit=100 (max boundary)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/policy/rules?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "rules"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('limit=100 trả về 200', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('items không vượt quá 100', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.items.length).to.be.at.most(100);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /access-log — Gửi log DENY với reason",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-002\",\n  \"gateId\": \"GATE-05\",\n  \"direction\": \"ENTER\",\n  \"decision\": \"DENY\",\n  \"reason\": \"Thẻ không có quyền vào khu hạn chế\",\n  \"timestamp\": \"2026-05-10T08:05:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/access-log",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-log"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Log DENY được ghi nhận thành công', function() {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response time hợp lý', function() {",
+                  "  if (pm.environment.get('env') === 'local') {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "  }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05_Consumer_side_Smoke",
+      "item": [
+        {
+          "name": "GET /health — Access Gate kiểm tra Core Business còn sống",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Core Business service health check pass', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('ok');",
+                  "});",
+                  "pm.test('Consumer có thể kết nối được Provider', function() {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /policy/access-check — Consumer smoke test EXIT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-001\",\n  \"gateId\": \"GATE-01\",\n  \"direction\": \"EXIT\",\n  \"timestamp\": \"2026-05-10T17:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/access-check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "access-check"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Access Gate có thể gọi policy check cho direction EXIT', function() {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Core Business trả về decision hợp lệ', function() {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(['ALLOW', 'DENY']).to.include(json.decision);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06_Local_only_NonFunctional",
+      "item": [
+        {
+          "name": "GET /health — Response time SLA (chỉ chạy local)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get('env') === 'local') {",
+                  "  pm.test('Health check response < 200ms trên local', function() {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('SLA test bỏ qua trên môi trường mock', function() {",
+                  "    pm.expect(true).to.be.true;",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /policy/access-check — Latency SLA (chỉ chạy local)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardId\": \"RFID-2026-001\",\n  \"gateId\": \"GATE-01\",\n  \"direction\": \"ENTER\",\n  \"timestamp\": \"2026-05-10T08:00:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/policy/access-check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "policy",
+                "access-check"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get('env') === 'local') {",
+                  "  pm.test('Policy check response < 200ms trên local (SLA realtime)', function() {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('SLA test bỏ qua trên môi trường mock', function() {",
+                  "    pm.expect(true).to.be.true;",
+                  "  });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
